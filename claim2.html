@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claim Your Order</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Claim Your Order</h1>
+  <input type="text" id="username" placeholder="Enter your username" />
+  <button onclick="submitClaim()">Submit</button>
+  <div id="response" class="message"></div>
+
+  <script>
+    async function submitClaim() {
+      const username = document.getElementById("username").value.trim();
+      const responseBox = document.getElementById("response");
+      responseBox.textContent = "";
+      responseBox.className = "message";
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwRRlx2qRnJmhSbtwAMo69wWREniCRz89rjYVJNWhKsHndNnHStdP-sFkiryiMZd7YM/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username })
+        });
+
+        const result = await res.json();
+        console.log(result);
+
+        if (result.success) {
+          responseBox.textContent = "✅ Claim submitted!";
+          responseBox.classList.add("success");
+        } else {
+          responseBox.textContent = `❌ ${result.error || "Unknown error."}`;
+          responseBox.classList.add("error");
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+        responseBox.textContent = "❌ Error submitting claim.";
+        responseBox.classList.add("error");
+      }
+    }
+  </script>
+</body>
+</html>
